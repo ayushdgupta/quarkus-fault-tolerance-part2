@@ -4,6 +4,7 @@ import com.guptaji.proxyInterface.TvSeriesApiProxy;
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
+import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logmanager.Logger;
 
@@ -28,7 +29,8 @@ public class IndiaTvSeriesData {
     // last i.e.after 3 retries fallback method will be hit.
 
     // in @timeout we've provided 1000 ms i.e. 1 sec wait time for our API so if the response will not come
-    // in the given time then Retry will be there for 3 times then fallback.
+    // in the given time then Retry will be there for 3 times then fallback. but if Retry will not be there then
+    // after 1 sec. only fallback method will execute. but if fallback was also not there then
 
     @GET
     @Fallback(fallbackMethod = "getTvSeriesCountByCountryFallbackMethod")
@@ -41,11 +43,22 @@ public class IndiaTvSeriesData {
         
         Long startTime = System.currentTimeMillis();
         Response response = tvSeriesApiProxy.getTvSeriesCountByCountry(countryName);
+//        try {
+//            Response response = tvSeriesApiProxy.getTvSeriesCountByCountry(countryName);
+//        } catch (Exception e){
+//            LOGGER.info("Exceptions is handled that's why log get printed for the case" +
+//                    "when retry and fallback has been removed only timeout is there");
+//        }
+//        LOGGER.info("this log is for testing timeout fault tolerance if both fallback and retry will " +
+//                "be removed then will this log print??? so answer is - YES and some " +
+//                "org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException" +
+//                "are also coming but i am not sure on that part yet.");
         Long endTime = System.currentTimeMillis();
 
         String resp = response.readEntity(String.class);
 
         return Response.ok(resp + " Time taken by API is "+ (endTime - startTime)/ 1000).build();
+//        return null;
     }
 
     public Response getTvSeriesCountByCountryFallbackMethod(String countryName){
