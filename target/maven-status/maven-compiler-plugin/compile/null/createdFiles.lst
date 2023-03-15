@@ -1,0 +1,5 @@
+com\guptaji\proxyInterface\TvSeriesApiProxy.class
+com\guptaji\GreetingResource.class
+com\guptaji\MyRemoteService.class
+com\guptaji\resource\IndiaTvSeriesData.class
+com\guptaji\MyRemoteService$Extension.class
